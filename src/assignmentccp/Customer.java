@@ -1,18 +1,13 @@
 package assignmentccp;
 
 import java.util.Date;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Customer extends Thread {
 
     int customerID;
     Date inTime;
     Salon salon;
-    final int MAX_WAIT_TIME_IN_SECONDS = 10;
+    final int CUSTOMER_MAX_WAIT_DURATION = 10;
 
     public Customer(int customerID, Salon salon) {
         this.customerID = customerID;
@@ -41,10 +36,10 @@ public class Customer extends Thread {
             if (!salon.isClosingTime()) {
                 salon.add(this);
             }
-            // Start a thread to wait for MAX_WAIT_TIME_IN_SECONDS
+            // Start a thread to wait for CUSTOMER_MAX_WAIT_DURATION
             new Thread(() -> {
                 try {
-                    Thread.sleep(MAX_WAIT_TIME_IN_SECONDS * 1000);
+                    Thread.sleep(CUSTOMER_MAX_WAIT_DURATION * 1000);
                     // After waiting, ask the salon to remove this customer if still standing
                     salon.removeStandingCustomer(this);
                 } catch (InterruptedException ex) {

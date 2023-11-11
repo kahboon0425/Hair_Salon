@@ -99,12 +99,16 @@ public class Salon extends Thread {
                 long startTime = System.currentTimeMillis();
                 System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " starts cutting hair for customer " + customer.getCustomerID() + " at progress -- 0%");
 
+                // Generate a total random duration between 3 and 6 seconds for the entire haircut
+                int totalHaircutTime = ThreadLocalRandom.current().nextInt(3000, 6001); // 3 to 6 seconds in milliseconds
+
                 int progress = 0;
                 while (progress < 100) {
-                    progress += 25; //Increment by 25%
+                    progress += 25; // Increment by 25%
                     System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " is cutting customer " + customer.customerID + " hair at progress -- " + progress + "%");
-                    // Generate a random duration between 1 and 2 seconds
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 2001)); // hair cutting duration
+
+                    // Divide the total haircut time evenly across the four progress steps
+                    Thread.sleep(totalHaircutTime / 4); // Divide total time by 4
                 }
 
                 long endTime = System.currentTimeMillis();
@@ -124,7 +128,7 @@ public class Salon extends Thread {
                     if (!waitSittingCustomers.isEmpty()) {
                         notify(); // Wake up one hairdresser
                         System.out.println("Hairdresser " + hairdresser.getHairdresserID() + " calls the next customer.");
-                        
+
                     }
                 }
             }

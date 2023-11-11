@@ -45,7 +45,7 @@ public class Salon extends Thread {
             waitSittingCustomers.offer(customer);
             // wake up any hairdresser who might be waiting for a customer.
             notify();
-            System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " is sitting on waiting chair.");
+            System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " is sitting on waiting-room seat.");
         } else if (waitStandingCustomers.size() < 5) {
             waitStandingCustomers.offer(customer);
             System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " is standing at waiting area.");
@@ -64,24 +64,21 @@ public class Salon extends Thread {
                             return;
                         }
                         System.out.println("Hairdresser " + hairdresser.getHairdresserID() + " go to sleep.");
-                        wait(); //Wait if there is no customer
+                        wait(); 
                     }
 
-                    customer = waitSittingCustomers.poll(); //Take the first customer from sitting area
+                    customer = waitSittingCustomers.poll(); 
 
-                    // Check if there's any customer standing and the sitting area has space
                     if (!waitStandingCustomers.isEmpty() && waitSittingCustomers.size() < 5) {
                         // Move the longest waiting customer from standing to sitting area
                         Customer standingCustomer = waitStandingCustomers.poll();
                         waitSittingCustomers.offer(standingCustomer);
-                        System.out.println("[" + getCurrentTime() + "]: Customer " + standingCustomer.getCustomerID() + " moves waiting seat.");
+                        System.out.println("[" + getCurrentTime() + "]: Customer " + standingCustomer.getCustomerID() + " moves from standing to sitting in waiting room.");
                     }
                 }
 
                 int salonChairID = hairdresser.getHairdresserID();
-//                if (!waitSittingCustomers.isEmpty()) {
-//                        notify(); // Wake up one hairdresser
-//                    }
+//             
                 System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + " assign to hairdresser " + hairdresser.getHairdresserID() + ".");
                 System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + " sits on salon chair " + salonChairID + ".");
 

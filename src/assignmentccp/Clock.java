@@ -20,7 +20,7 @@ public class Clock extends Thread {
 
     public void run() {
         try {
-            // Sleep for 50 seconds to simulate the salon being open
+            // Sleep for 15 seconds - salon open for 15 seconds
             Thread.sleep(15000);
             NotifyClosed();
         } catch (InterruptedException ex) {

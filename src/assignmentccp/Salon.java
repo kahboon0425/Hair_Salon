@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 public class Salon extends Thread {
 
     private boolean closingTime = false;
-    BlockingQueue<Customer> waitingSitting = new ArrayBlockingQueue<>(5);
-    BlockingQueue<Customer> waitingStanding = new ArrayBlockingQueue<>(5);
+    BlockingQueue<Customer> waitSittingCustomers = new ArrayBlockingQueue<>(5);
+    BlockingQueue<Customer> waitStandingCustomers = new ArrayBlockingQueue<>(5);
     BlockingQueue<Integer> combs = new ArrayBlockingQueue<>(2);
     BlockingQueue<Integer> scissors = new ArrayBlockingQueue<>(2);
 
@@ -29,7 +29,7 @@ public class Salon extends Thread {
 
     public synchronized void setClosingTime() {
         this.closingTime = true;
-        int waitingCustomer = waitingSitting.size() + waitingStanding.size();
+        int waitingCustomer = waitSittingCustomers.size() + waitStandingCustomers.size();
         System.out.println("We are going to close now but still have " + waitingCustomer + " customers left.Next!");
         //notifyAll();
     }
@@ -37,17 +37,17 @@ public class Salon extends Thread {
     public synchronized void add(Customer customer) throws InterruptedException {
         System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " entered the salon.");
 
-        if (waitingSitting.size() < 5) {
+        if (waitSittingCustomers.size() < 5) {
             // use 'offer' instead of 'add'
             // if the queue has reached its capacity, it will return false
             // indicates customer give up and leave sthe shop
             // consistent with the idea that customers will leave if there are no seats available
-            waitingSitting.offer(customer);
+            waitSittingCustomers.offer(customer);
             // wake up any hairdresser who might be waiting for a customer.
             notify();
             System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " is sitting on waiting chair.");
-        } else if (waitingStanding.size() < 5) {
-            waitingStanding.offer(customer);
+        } else if (waitStandingCustomers.size() < 5) {
+            waitStandingCustomers.offer(customer);
             System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " is standing at waiting area.");
         } else {
             System.out.println("[" + getCurrentTime() + "]: Salon is full. Customer " + customer.customerID + " leaves the salon.");
@@ -59,7 +59,7 @@ public class Salon extends Thread {
             while (true) {
                 Customer customer;
                 synchronized (this) {
-                    while (waitingSitting.isEmpty()) {
+                    while (waitSittingCustomers.isEmpty()) {
                         if (closingTime) {
                             return;
                         }
@@ -67,19 +67,19 @@ public class Salon extends Thread {
                         wait(); //Wait if there is no customer
                     }
 
-                    customer = waitingSitting.poll(); //Take the first customer from sitting area
+                    customer = waitSittingCustomers.poll(); //Take the first customer from sitting area
 
                     // Check if there's any customer standing and the sitting area has space
-                    if (!waitingStanding.isEmpty() && waitingSitting.size() < 5) {
+                    if (!waitStandingCustomers.isEmpty() && waitSittingCustomers.size() < 5) {
                         // Move the longest waiting customer from standing to sitting area
-                        Customer standingCustomer = waitingStanding.poll();
-                        waitingSitting.put(standingCustomer);
+                        Customer standingCustomer = waitStandingCustomers.poll();
+                        waitSittingCustomers.put(standingCustomer);
                         System.out.println("[" + getCurrentTime() + "]: Customer " + standingCustomer.getCustomerID() + " moves waiting seat.");
                     }
                 }
 
                 int salonChairID = hairdresser.getHairdresserID();
-//                if (!waitingSitting.isEmpty()) {
+//                if (!waitSittingCustomers.isEmpty()) {
 //                        notify(); // Wake up one hairdresser
 //                    }
                 System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + " assign to hairdresser " + hairdresser.getHairdresserID() + ".");
@@ -120,8 +120,8 @@ public class Salon extends Thread {
 
                 // After cutting hair, call notifyAll() or notify() to wake up sleeping hairdressers 
                 synchronized (this) {
-                    // If there's a hairdresser sleeping and waitingSitting is not empty, wake one up
-                    if (!waitingSitting.isEmpty()) {
+                    // If there's a hairdresser sleeping and waitSittingCustomers is not empty, wake one up
+                    if (!waitSittingCustomers.isEmpty()) {
                         notify(); // Wake up one hairdresser
                         System.out.println("Hairdresser " + hairdresser.getHairdresserID() + " calls the next customer.");
                         
@@ -129,7 +129,7 @@ public class Salon extends Thread {
                 }
             }
         } catch (InterruptedException ex) {
-            Logger.getLogger(Salon.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex.getMessage());
         }
     }
 
@@ -144,8 +144,8 @@ public class Salon extends Thread {
     }
 
     public synchronized void removeStandingCustomer(Customer customer) {
-        if (waitingStanding.contains(customer)) {
-            waitingStanding.remove(customer);
+        if (waitStandingCustomers.contains(customer)) {
+            waitStandingCustomers.remove(customer);
             System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + " left the salon after waiting too long. Bye!");
         }
     }

@@ -52,7 +52,7 @@ public class Customer extends Thread {
                 }
             }).start();
         } catch (InterruptedException ex) {
-            Logger.getLogger(Customer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex.getMessage());
         }
     }
 

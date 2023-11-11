@@ -27,7 +27,7 @@ public class MainClass {
             customerGenerator.join();
             Thread.sleep(5000);  // Allow time for the last customer to get their hair cut
         } catch (InterruptedException ex) {
-            Logger.getLogger(MainClass.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex.getMessage());
         }
 
 //        salon.setClosingTime();

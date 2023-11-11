@@ -24,7 +24,7 @@ public class Clock extends Thread {
             Thread.sleep(15000);
             NotifyClosed();
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
+            System.out.println("Error: " + ex.getMessage());
         }
     }
     

@@ -30,7 +30,7 @@ public class CustomerGenerator extends Thread {
                     customerID++;
                     Thread.sleep(ThreadLocalRandom.current().nextInt(0, 2001));
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(CustomerGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error: " + ex.getMessage());
                 }
             }
         }

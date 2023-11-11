@@ -47,9 +47,8 @@ public class Customer extends Thread {
                     Thread.sleep(MAX_WAIT_TIME_IN_SECONDS * 1000);
                     // After waiting, ask the salon to remove this customer if still standing
                     salon.removeStandingCustomer(this);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // Propagate interrupt
-                    System.out.println("[" + salon.getCurrentTime() + "]: Customer " + getCustomerID() + " was interrupted.");
+                } catch (InterruptedException ex) {
+                    System.out.println("Error: " + ex.getMessage());
                 }
             }).start();
         } catch (InterruptedException ex) {

@@ -20,7 +20,7 @@ public class MainClass {
 
         CustomerGenerator customerGenerator = new CustomerGenerator(salon);
         customerGenerator.start();
-         Clock clock = new Clock(customerGenerator, salon);
+        Clock clock = new Clock(customerGenerator, salon);
         clock.start();
 
         try {
@@ -30,7 +30,7 @@ public class MainClass {
             System.out.println("Error: " + ex.getMessage());
         }
 
-//        salon.setClosingTime();
+//       salon.setClosingTime();
         hairdresser1.join();
         hairdresser2.join();
         hairdresser3.join();

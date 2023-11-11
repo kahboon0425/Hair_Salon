@@ -73,7 +73,7 @@ public class Salon extends Thread {
                     if (!waitStandingCustomers.isEmpty() && waitSittingCustomers.size() < 5) {
                         // Move the longest waiting customer from standing to sitting area
                         Customer standingCustomer = waitStandingCustomers.poll();
-                        waitSittingCustomers.put(standingCustomer);
+                        waitSittingCustomers.offer(standingCustomer);
                         System.out.println("[" + getCurrentTime() + "]: Customer " + standingCustomer.getCustomerID() + " moves waiting seat.");
                     }
                 }

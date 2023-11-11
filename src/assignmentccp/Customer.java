@@ -38,8 +38,9 @@ public class Customer extends Thread {
 
     public void run() {
         try {
-            salon.add(this);
-
+            if (!salon.isClosingTime()) {
+                salon.add(this);
+            }
             // Start a thread to wait for MAX_WAIT_TIME_IN_SECONDS
             new Thread(() -> {
                 try {

@@ -22,6 +22,7 @@ public class Hairdresser extends Thread {
 
     public void run() {
         while (true) {
+            
             salon.cutHair(this);
 
             synchronized (salon) {

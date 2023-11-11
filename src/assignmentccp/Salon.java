@@ -38,8 +38,12 @@ public class Salon extends Thread {
         System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " entered the salon.");
 
         if (waitingSitting.size() < 5) {
+            // use 'offer' instead of 'add'
+            // if the queue has reached its capacity, it will return false
+            // indicates customer give up and leave sthe shop
+            // consistent with the idea that customers will leave if there are no seats available
             waitingSitting.offer(customer);
-            //notifyAll();
+            // wake up any hairdresser who might be waiting for a customer.
             notify();
             System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " is sitting on waiting chair.");
         } else if (waitingStanding.size() < 5) {
@@ -99,7 +103,8 @@ public class Salon extends Thread {
                 while (progress < 100) {
                     progress += 25; //Increment by 25%
                     System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " is cutting customer " + customer.customerID + " hair at progress -- " + progress + "%");
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 2001)); // Simulating hair cutting duration
+                    // Generate a random duration between 1 and 2 seconds
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 2001)); // hair cutting duration
                 }
 
                 long endTime = System.currentTimeMillis();
@@ -113,7 +118,7 @@ public class Salon extends Thread {
                 scissors.put(scissorId);
                 System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " returns comb " + combId + " and scissor " + scissorId + ".");
 
-                // After cutting hair, call notifyAll() or notify() to wake up sleeping hairdressers if needed
+                // After cutting hair, call notifyAll() or notify() to wake up sleeping hairdressers 
                 synchronized (this) {
                     // If there's a hairdresser sleeping and waitingSitting is not empty, wake one up
                     if (!waitingSitting.isEmpty()) {

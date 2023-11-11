@@ -20,6 +20,8 @@ public class MainClass {
 
         CustomerGenerator customerGenerator = new CustomerGenerator(salon);
         customerGenerator.start();
+         Clock clock = new Clock(customerGenerator, salon);
+        clock.start();
 
         try {
             customerGenerator.join();
@@ -28,7 +30,7 @@ public class MainClass {
             Logger.getLogger(MainClass.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        salon.setClosingTime();
+//        salon.setClosingTime();
         hairdresser1.join();
         hairdresser2.join();
         hairdresser3.join();

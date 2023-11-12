@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Salon extends Thread {
 
@@ -49,6 +47,7 @@ public class Salon extends Thread {
         } else if (waitStandingCustomers.size() < 5) {
             waitStandingCustomers.offer(customer);
             System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " is standing at waiting area.");
+
         } else {
             System.out.println("[" + getCurrentTime() + "]: Salon is full. Customer " + customer.customerID + " leaves the salon.");
         }
@@ -64,10 +63,10 @@ public class Salon extends Thread {
                             return;
                         }
                         System.out.println("Hairdresser " + hairdresser.getHairdresserID() + " go to sleep.");
-                        wait(); 
+                        wait();
                     }
 
-                    customer = waitSittingCustomers.poll(); 
+                    customer = waitSittingCustomers.poll();
 
                     if (!waitStandingCustomers.isEmpty() && waitSittingCustomers.size() < 5) {
                         // Move the longest waiting customer from standing to sitting area
@@ -78,52 +77,51 @@ public class Salon extends Thread {
                 }
 
                 int salonChairID = hairdresser.getHairdresserID();
-//             
                 System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + " assign to hairdresser " + hairdresser.getHairdresserID() + ".");
                 System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + " sits on salon chair " + salonChairID + ".");
 
                 if (combs.isEmpty() || scissors.isEmpty()) {
-                    System.out.println("[" + getCurrentTime() + "]: " + "Hairdresser " + hairdresser.getHairdresserID() + " is waiting for resources, all combs and scissors are in use.");
+                    System.out.println("[" + getCurrentTime() + "]: " + "Hairdresser " + hairdresser.getHairdresserID()
+                            + " is waiting for resources, all combs and scissors are in use.");
                 }
 
-                int combId;
-                int scissorId;
-                combId = combs.take();
-                scissorId = scissors.take();
+                int combId = combs.take();
+                int scissorId = scissors.take();
 
-                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " acquire comb " + combId + " and scissor " + scissorId + ".");
+                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " acquire comb " + combId
+                        + " and scissor " + scissorId + ".");
 
                 long startTime = System.currentTimeMillis();
-                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " starts cutting hair for customer " + customer.getCustomerID() + " at progress -- 0%");
+                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " starts cutting hair for customer "
+                        + customer.getCustomerID() + " at progress -- 0%");
 
                 // Generate a total random duration between 3 and 6 seconds for the entire haircut
-                int totalHaircutTime = ThreadLocalRandom.current().nextInt(3000, 6001); // 3 to 6 seconds in milliseconds
+                int totalHaircutTime = ThreadLocalRandom.current().nextInt(3000, 6001);
 
                 int progress = 0;
                 while (progress < 100) {
                     progress += 25; // Increment by 25%
-                    System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " is cutting customer " + customer.customerID + " hair at progress -- " + progress + "%");
-
-                    // Divide the total haircut time evenly across the four progress steps
-                    Thread.sleep(totalHaircutTime / 4); // Divide total time by 4
+                    System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " is cutting customer " + customer.customerID
+                            + " hair at progress -- " + progress + "%");
+                    Thread.sleep(totalHaircutTime / 4);
                 }
 
                 long endTime = System.currentTimeMillis();
-                long duration = (endTime - startTime) / 1000; // in seconds
+                long duration = (endTime - startTime) / 1000;
 
-                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " finished cutting hair for Customer " + customer.getCustomerID() + ".");
+                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " finished cutting hair for Customer "
+                        + customer.getCustomerID() + ".");
                 System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " finished their hair cut.");
                 System.out.println("Hair cutting process for customer " + customer.customerID + " took " + duration + " seconds.");
                 System.out.println("[" + getCurrentTime() + "]: Customer " + customer.customerID + " pays RM " + duration * 10 + " and leaves the salon.");
                 combs.put(combId);
                 scissors.put(scissorId);
-                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " returns comb " + combId + " and scissor " + scissorId + ".");
+                System.out.println("[" + getCurrentTime() + "]: Hairdresser " + hairdresser.getHairdresserID() + " returns comb " + combId + " and scissor "
+                        + scissorId + ".");
 
-                // After cutting hair, call notifyAll() or notify() to wake up sleeping hairdressers 
                 synchronized (this) {
-                    // If there's a hairdresser sleeping and waitSittingCustomers is not empty, wake one up
                     if (!waitSittingCustomers.isEmpty()) {
-                        notify(); // Wake up one hairdresser
+                        notify();
                         System.out.println("Hairdresser " + hairdresser.getHairdresserID() + " calls the next customer.");
 
                     }
@@ -144,10 +142,11 @@ public class Salon extends Thread {
         return formattedTime;
     }
 
-    public synchronized void removeStandingCustomer(Customer customer) {
+    public synchronized void removeImpatientCustomer(Customer customer) {
         if (waitStandingCustomers.contains(customer)) {
             waitStandingCustomers.remove(customer);
-            System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + " left the salon after waiting too long. Bye!");
+            System.out.println("[" + getCurrentTime() + "]: Customer " + customer.getCustomerID() + 
+                    " got tired of waiting and left the salon. Bye!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
     }
 }

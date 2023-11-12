@@ -1,8 +1,5 @@
 package assignmentccp;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class MainClass {
 
     public static void main(String[] args) throws InterruptedException {
@@ -30,11 +27,10 @@ public class MainClass {
             System.out.println("Error: " + ex.getMessage());
         }
 
-//       salon.setClosingTime();
         hairdresser1.join();
         hairdresser2.join();
         hairdresser3.join();
 
-        System.out.println("Salon is closed for the day!");
+        System.out.println("Hair salon is closed!");
     }
 }

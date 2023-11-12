@@ -21,7 +21,7 @@ public class Clock extends Thread {
     public void run() {
         try {
             // Sleep for 15 seconds - salon open for 15 seconds
-            Thread.sleep(15000);
+            Thread.sleep(30000);
             NotifyClosed();
         } catch (InterruptedException ex) {
             System.out.println("Error: " + ex.getMessage());

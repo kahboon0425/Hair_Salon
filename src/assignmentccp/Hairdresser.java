@@ -12,14 +12,6 @@ public class Hairdresser extends Thread {
         this.hairdresserID = hairdresserID;
     }
 
-    public int getHairdresserID() {
-        return hairdresserID;
-    }
-
-    public void setHairdresserID(int hairdresserID) {
-        this.hairdresserID = hairdresserID;
-    }
-
     public void run() {
         while (true) {
             
@@ -33,6 +25,15 @@ public class Hairdresser extends Thread {
                 }
             }
         }
+    }
+    
+    
+    public int getHairdresserID() {
+        return hairdresserID;
+    }
+
+    public void setHairdresserID(int hairdresserID) {
+        this.hairdresserID = hairdresserID;
     }
 
 }

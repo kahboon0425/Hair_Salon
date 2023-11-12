@@ -7,7 +7,7 @@ public class Customer extends Thread {
     int customerID;
     Date inTime;
     Salon salon;
-    final int CUSTOMER_MAX_WAIT_DURATION = 10;
+    final int CUSTOMER_MAX_WAIT_DURATION = 4;
 
     public Customer(int customerID, Salon salon) {
         this.customerID = customerID;
@@ -15,6 +15,26 @@ public class Customer extends Thread {
         this.inTime = new Date();
     }
 
+    public void run() {
+        try {
+            if (!salon.isClosingTime()) {
+                salon.add(this);
+            }
+           
+            new Thread(() -> {
+                try {
+                    Thread.sleep(CUSTOMER_MAX_WAIT_DURATION * 1000);
+                    salon.removeImpatientCustomer(this);
+                } catch (InterruptedException ex) {
+                    System.out.println("Error: " + ex.getMessage());
+                }
+            }).start();
+        } catch (InterruptedException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+    }
+    
+    
     public int getCustomerID() {
         return customerID;
     }
@@ -31,24 +51,5 @@ public class Customer extends Thread {
         this.inTime = inTime;
     }
 
-    public void run() {
-        try {
-            if (!salon.isClosingTime()) {
-                salon.add(this);
-            }
-            // Start a thread to wait for CUSTOMER_MAX_WAIT_DURATION
-            new Thread(() -> {
-                try {
-                    Thread.sleep(CUSTOMER_MAX_WAIT_DURATION * 1000);
-                    // After waiting, ask the salon to remove this customer if still standing
-                    salon.removeStandingCustomer(this);
-                } catch (InterruptedException ex) {
-                    System.out.println("Error: " + ex.getMessage());
-                }
-            }).start();
-        } catch (InterruptedException ex) {
-            System.out.println("Error: " + ex.getMessage());
-        }
-    }
 
 }
